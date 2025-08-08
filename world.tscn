@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5e205wj23gh7"]
 
-[ext_resource type="Script" path="res://world.gd" id="1_5olk8"]
+[ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
 
 [sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
 line_thickness = 8.0
@@ -8,11 +8,11 @@ line_thickness = 8.0
 [sub_resource type="BoxWireMesh4D" id="BoxWireMesh4D_jyoio"]
 
 [node name="Viewer" type="Node4D"]
-script = ExtResource("1_5olk8")
+script = ExtResource("1_ql75x")
 
 [node name="Camera" type="Camera4D" parent="."]
 position = Vector4(0, 0, 4, 0)
-focal_length_4d = 1.5
+focal_length_4d = 2.0
 clip_far = 5.0
 w_fade_mode = 3
 w_fade_color_negative = Color(0, 0.501961, 1, 1)
@@ -25,3 +25,135 @@ depth_fade_start = 3.5
 [node name="Visual" type="MeshInstance4D" parent="."]
 material_override = SubResource("WireMaterial4D_v8gev")
 mesh = SubResource("BoxWireMesh4D_jyoio")
+
+[node name="UI" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="Vertical" type="VBoxContainer" parent="UI"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CameraFadeStart" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraFadeStart"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+min_value = 2.0
+max_value = 8.0
+step = 0.0
+value = 3.5
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraFadeStart"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera Fade Start"
+
+[node name="CameraFadeEnd" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraFadeEnd"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+min_value = 2.0
+max_value = 8.0
+step = 0.0
+value = 5.0
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraFadeEnd"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera Fade End"
+
+[node name="CameraFade" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Button" type="CheckBox" parent="UI/Vertical/CameraFade"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+button_pressed = true
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraFade"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera Depth Fade"
+
+[node name="CameraWFadeDistance" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeDistance"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+max_value = 4.0
+step = 0.0
+value = 1.0
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistance"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera W Fade Distance"
+
+[node name="CameraWFadeSlope" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeSlope"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+max_value = 1.5
+step = 0.0
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeSlope"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera W Fade Slope"
+
+[node name="CameraWFadeDistanceFocus" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeDistanceFocus"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+max_value = 4.0
+step = 0.0
+value = 0.25
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistanceFocus"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera W Fade Distance When Focusing"
+
+[node name="CameraWFadeSlopeFocus" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeSlopeFocus"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+max_value = 1.5
+step = 0.0
+
+[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeSlopeFocus"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Camera W Fade Slope When Focusing"
+
+[connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
+[connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
+[connection signal="toggled" from="UI/Vertical/CameraFade/Button" to="." method="_depth_fade_toggled"]
+[connection signal="value_changed" from="UI/Vertical/CameraWFadeDistance/Slider" to="." method="_camera_w_fade_distance_changed"]
+[connection signal="value_changed" from="UI/Vertical/CameraWFadeSlope/Slider" to="." method="_camera_w_fade_slope_changed"]
+[connection signal="value_changed" from="UI/Vertical/CameraWFadeDistanceFocus/Slider" to="." method="_camera_w_fade_distance_focus_changed"]
+[connection signal="value_changed" from="UI/Vertical/CameraWFadeSlopeFocus/Slider" to="." method="_camera_w_fade_slope_focus_changed"]
