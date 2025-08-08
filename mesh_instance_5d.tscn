@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bbyewgip236rr"]
+
+[ext_resource type="Script" path="res://mesh_instance_5d.gd" id="1_al475"]
+
+[node name="MeshInstance5D" type="Node4D"]
+script = ExtResource("1_al475")
+
+[node name="Visual" type="MeshInstance4D" parent="."]

@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://bkcbt5asourkw"
+path="res://.godot/imported/Pentachoron.off-10b81a3a7365b5ddeac5027a3bbab004.res"
+
+[deps]
+
+source_file="res://Pentachoron.off"
+dest_files=["res://.godot/imported/Pentachoron.off-10b81a3a7365b5ddeac5027a3bbab004.res"]
+
+[params]
+
+deduplicate_edges=true

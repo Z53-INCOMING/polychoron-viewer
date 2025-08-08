@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://biov57q1mj2cd"
+path="res://.godot/imported/ike.off-1cfccc4cb4dc3eaedcc2fda9ee3f28bd.res"
+
+[deps]
+
+source_file="res://ike.off"
+dest_files=["res://.godot/imported/ike.off-1cfccc4cb4dc3eaedcc2fda9ee3f28bd.res"]
+
+[params]
+
+deduplicate_edges=true

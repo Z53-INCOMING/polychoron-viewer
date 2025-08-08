@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://b5e205wj23gh7"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_5olk8"]
+[ext_resource type="Script" path="res://camera_controller.gd" id="1_lx1e1"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://csv64bhbjg67v" path="res://Dual of Truncated hexacosichoron.off" id="3_gpj4e"]
+
+[sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
+line_thickness = 8.0
+
+[node name="World" type="Node4D"]
+script = ExtResource("1_5olk8")
+
+[node name="CameraController" type="Node4D" parent="."]
+script = ExtResource("1_lx1e1")
+
+[node name="Camera" type="Camera4D" parent="CameraController"]
+position = Vector4(0, 0, 4, 0)
+clip_far = 5.0
+w_fade_mode = 3
+w_fade_color_negative = Color(0, 0.501961, 1, 1)
+w_fade_color_positive = Color(1, 0.501961, 0, 1)
+w_fade_distance = 3.0
+w_fade_slope = 0.0
+depth_fade = true
+depth_fade_start = 3.5
+
+[node name="Visual" type="MeshInstance4D" parent="CameraController"]
+material_override = SubResource("WireMaterial4D_v8gev")
+mesh = ExtResource("3_gpj4e")

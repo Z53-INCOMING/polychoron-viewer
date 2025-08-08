@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://d3keq7wtxbofp"
+path="res://.godot/imported/Rhombicuboctahedron.off-76eadbd5a0ca0236cab540be1ff85053.res"
+
+[deps]
+
+source_file="res://Rhombicuboctahedron.off"
+dest_files=["res://.godot/imported/Rhombicuboctahedron.off-76eadbd5a0ca0236cab540be1ff85053.res"]
+
+[params]
+
+deduplicate_edges=true

@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://2fxquj7oiwf4"
+path="res://.godot/imported/Cuboctahedral_prism.off-0c0516b8b857204f5d792fae7b0a6a7b.res"
+
+[deps]
+
+source_file="res://Cuboctahedral_prism.off"
+dest_files=["res://.godot/imported/Cuboctahedral_prism.off-0c0516b8b857204f5d792fae7b0a6a7b.res"]
+
+[params]
+
+deduplicate_edges=true
