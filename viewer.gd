@@ -38,11 +38,15 @@ func _input(event):
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			if Input.is_key_pressed(KEY_SHIFT):
 				line_thickness *= 8.0 / 7.0
+			elif Input.is_key_pressed(KEY_CTRL):
+				camera.focal_length_4d *= 8.0 / 7.0
 			else:
 				zoom *= 7.0 / 6.0
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if Input.is_key_pressed(KEY_SHIFT):
 				line_thickness *= 7.0 / 8.0
+			elif Input.is_key_pressed(KEY_CTRL):
+				camera.focal_length_4d *= 7.0 / 8.0
 			else:
 				zoom *= 6.0 / 7.0
 		visual.material_override.line_thickness = line_thickness

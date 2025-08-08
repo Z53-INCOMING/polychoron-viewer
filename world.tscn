@@ -1,11 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://bypi3317cqxc2" path="res://Cuboctahedron.off" id="2_u4onx"]
 
 [sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
 line_thickness = 8.0
-
-[sub_resource type="BoxWireMesh4D" id="BoxWireMesh4D_jyoio"]
 
 [node name="Viewer" type="Node4D"]
 script = ExtResource("1_ql75x")
@@ -24,7 +23,7 @@ depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
 material_override = SubResource("WireMaterial4D_v8gev")
-mesh = SubResource("BoxWireMesh4D_jyoio")
+mesh = ExtResource("2_u4onx")
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
@@ -149,6 +148,16 @@ step = 0.0
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Camera W Fade Slope When Focusing"
+
+[node name="Tutorial" type="Label" parent="UI/Vertical"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Hold shift while scrolling to change line thickness
+Hold control while scrolling to change the size of the image
+Scroll to zoom in and out
+Hold right click to focus (changes your 4D FOV to alternate values)
+Mouse to rotate ZX and ZY, left click + mouse to rotate WX and WY
+Back mouse button to rotate XY and ZW"
 
 [connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
