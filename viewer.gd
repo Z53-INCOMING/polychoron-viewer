@@ -95,7 +95,27 @@ func update_camera():
 	else:
 		camera.clip_far = 256.0
 
-
 func _depth_fade_toggled(toggled_on):
 	camera.depth_fade = toggled_on
 	update_camera()
+
+func _on_load_pressed():
+	var screen_size := Vector2i(2560, 1440)
+	var size := screen_size / 2
+	$FileDialog.popup(Rect2i((screen_size - size) / 2, size))
+
+
+func _on_file_dialog_file_selected(path: String):
+	var model = FileAccess.open(path, FileAccess.READ)
+	
+	var filename := path.split("/")[-1]
+	filename = filename.trim_suffix(filename.substr(filename.find("."))) + ".off"
+	var saved := FileAccess.open("res://" + filename, FileAccess.WRITE)
+	
+	for i in model.get_length():
+		saved.store_8(model.get_8())
+	saved.close()
+	
+	visual.mesh = ResourceLoader.load("res://" + filename, "off")
+	
+	basis = Projection.IDENTITY

@@ -25,10 +25,20 @@ depth_fade_start = 3.5
 material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_cur7m")
 
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Pick a model to look at"
+position = Vector2i(640, 360)
+size = Vector2i(640, 360)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.txt", "*.tres", "*.off")
+
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
 
 [node name="Vertical" type="VBoxContainer" parent="UI"]
+custom_minimum_size = Vector2(0, 1440)
 offset_right = 40.0
 offset_bottom = 40.0
 
@@ -159,6 +169,12 @@ Hold right click to focus (changes your 4D FOV to alternate values)
 Mouse to rotate ZX and ZY, left click + mouse to rotate WX and WY
 Back mouse button to rotate XY and ZW"
 
+[node name="Load" type="Button" parent="UI/Vertical"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Load Model (.off, .txt, .tres)"
+
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
 [connection signal="toggled" from="UI/Vertical/CameraFade/Button" to="." method="_depth_fade_toggled"]
@@ -166,3 +182,4 @@ Back mouse button to rotate XY and ZW"
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeSlope/Slider" to="." method="_camera_w_fade_slope_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeDistanceFocus/Slider" to="." method="_camera_w_fade_distance_focus_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeSlopeFocus/Slider" to="." method="_camera_w_fade_slope_focus_changed"]
+[connection signal="pressed" from="UI/Vertical/Load" to="." method="_on_load_pressed"]

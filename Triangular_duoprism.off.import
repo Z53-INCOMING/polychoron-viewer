@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://d212togyn6xoh"
+path="res://.godot/imported/Triangular_duoprism.off-39e1369b8799824b836ef3000a61fc27.res"
+
+[deps]
+
+source_file="res://Triangular_duoprism.off"
+dest_files=["res://.godot/imported/Triangular_duoprism.off-39e1369b8799824b836ef3000a61fc27.res"]
+
+[params]
+
+deduplicate_edges=true
