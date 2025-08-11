@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://d3pg5cjvus636"
+path="res://.godot/imported/Bitruncated_tesseract.off-1109a476894ca1bcd6ea369323f52f6d.res"
+
+[deps]
+
+source_file="res://Bitruncated_tesseract.off"
+dest_files=["res://.godot/imported/Bitruncated_tesseract.off-1109a476894ca1bcd6ea369323f52f6d.res"]
+
+[params]
+
+deduplicate_edges=true

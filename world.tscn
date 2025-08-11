@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
-[ext_resource type="ArrayWireMesh4D" uid="uid://bypi3317cqxc2" path="res://Cuboctahedron.off" id="2_u4onx"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://cj0vljtsjsyao" path="res://Rectified_tesseract.off" id="2_cur7m"]
 
 [sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
 line_thickness = 8.0
@@ -23,7 +23,7 @@ depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
 material_override = SubResource("WireMaterial4D_v8gev")
-mesh = ExtResource("2_u4onx")
+mesh = ExtResource("2_cur7m")
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
