@@ -109,13 +109,15 @@ func _on_file_dialog_file_selected(path: String):
 	var model = FileAccess.open(path, FileAccess.READ)
 	
 	var filename := path.split("/")[-1]
-	filename = filename.trim_suffix(filename.substr(filename.find("."))) + ".off"
-	var saved := FileAccess.open("res://" + filename, FileAccess.WRITE)
+	var file_extension := filename.substr(filename.find("."))
+	if file_extension == ".txt":
+		filename = filename.trim_suffix(file_extension) + ".off"
+		var saved := FileAccess.open("res://" + filename, FileAccess.WRITE)
+		
+		for i in model.get_length():
+			saved.store_8(model.get_8())
+		saved.close()
 	
-	for i in model.get_length():
-		saved.store_8(model.get_8())
-	saved.close()
-	
-	visual.mesh = ResourceLoader.load("res://" + filename, "off")
+	visual.mesh = ResourceLoader.load("res://" + filename, "off" if file_extension == ".txt" else file_extension.substr(1))
 	
 	basis = Projection.IDENTITY
