@@ -11,6 +11,7 @@ script = ExtResource("1_ql75x")
 
 [node name="Camera" type="Camera4D" parent="."]
 position = Vector4(0, 0, 4, 0)
+current = true
 focal_length_4d = 2.0
 clip_far = 5.0
 w_fade_mode = 3
@@ -26,7 +27,7 @@ material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_cur7m")
 
 [node name="FileDialog" type="FileDialog" parent="."]
-title = "Pick a model to look at"
+title = "Open a File"
 position = Vector2i(640, 360)
 size = Vector2i(640, 360)
 ok_button_text = "Open"

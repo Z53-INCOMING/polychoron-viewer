@@ -106,18 +106,12 @@ func _on_load_pressed():
 
 
 func _on_file_dialog_file_selected(path: String):
-	var model = FileAccess.open(path, FileAccess.READ)
-	
-	var filename := path.split("/")[-1]
-	var file_extension := filename.substr(filename.find("."))
-	if file_extension == ".txt":
-		filename = filename.trim_suffix(file_extension) + ".off"
-		var saved := FileAccess.open("res://" + filename, FileAccess.WRITE)
+	if path.ends_with("tres"):
+		visual.mesh = ResourceLoader.load(path)
+	else:
+		var off_doc: OFFDocument4D = OFFDocument4D.load_from_file(path)
+		var wire_mesh: ArrayWireMesh4D = off_doc.generate_wire_mesh_4d()
 		
-		for i in model.get_length():
-			saved.store_8(model.get_8())
-		saved.close()
-	
-	visual.mesh = ResourceLoader.load("res://" + filename, "off" if file_extension == ".txt" else file_extension.substr(1))
+		visual.mesh = wire_mesh
 	
 	basis = Projection.IDENTITY
