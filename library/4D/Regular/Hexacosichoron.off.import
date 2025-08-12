@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://bqfmudhf1g2sh"
+path="res://.godot/imported/Hexacosichoron.off-fc83022b9120c45c5e90108c1d0f26fe.res"
+
+[deps]
+
+source_file="res://library/4D/Regular/Hexacosichoron.off"
+dest_files=["res://.godot/imported/Hexacosichoron.off-fc83022b9120c45c5e90108c1d0f26fe.res"]
+
+[params]
+
+deduplicate_edges=true

@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://c1i7y5i4lcdqw"
+path="res://.godot/imported/Dual of Bitruncated tesseract.off-597f6e62f060ce5e6ec9cd10fab2cced.res"
+
+[deps]
+
+source_file="res://library/4D/Dual of Bitruncated tesseract.off"
+dest_files=["res://.godot/imported/Dual of Bitruncated tesseract.off-597f6e62f060ce5e6ec9cd10fab2cced.res"]
+
+[params]
+
+deduplicate_edges=true

@@ -29,6 +29,7 @@ mesh = ExtResource("2_wceh5")
 
 [node name="Visual5D" parent="." instance=ExtResource("3_ecl0n")]
 visible = false
+v_pos = 0.001
 
 [node name="Axes" type="MeshInstance4D" parent="."]
 basis = Projection(0.75, 0, 0, 0, 0, 0.75, 0, 0, 0, 0, 0.75, 0, 0, 0, 0, 0.75)
@@ -43,7 +44,6 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.off,*.tres")
-use_native_dialog = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false

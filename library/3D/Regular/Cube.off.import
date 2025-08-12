@@ -1,0 +1,15 @@
+[remap]
+
+importer="godot_4d.off_geometry_format.array_wire_mesh_4d"
+type="ArrayWireMesh4D"
+uid="uid://c534h108h5r8b"
+path="res://.godot/imported/Cube.off-252811a9ad3d7444c00bee432e64af36.res"
+
+[deps]
+
+source_file="res://library/3D/Regular/Cube.off"
+dest_files=["res://.godot/imported/Cube.off-252811a9ad3d7444c00bee432e64af36.res"]
+
+[params]
+
+deduplicate_edges=true
