@@ -19,6 +19,14 @@ var camera_w_fade_slope := 0.0
 var camera_w_fade_distance_focus := 0.25
 var camera_w_fade_slope_focus := 0.0
 
+var xy_angle := 0.0
+var zw_angle := 0.0
+var yv_angle := 0.0
+
+var xy_speed := 0.0
+var zw_speed := 0.0
+var yv_speed := 0.0
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
@@ -71,6 +79,22 @@ func _process(delta):
 			visual_5D.euler_5D.w -= angular_speed * delta
 	
 	axes.global_basis = Projection.IDENTITY
+	
+	xy_angle = wrapf(xy_angle + (xy_speed * delta), 0.0, TAU)
+	zw_angle = wrapf(zw_angle + (zw_speed * delta), 0.0, TAU)
+	yv_angle = wrapf(yv_angle + (yv_speed * delta), 0.0, TAU)
+	
+	if visual.visible:
+		if xy_speed != 0.0 or zw_speed != 0.0:
+			visual.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
+			visual.global_basis *= Basis4D.from_xy(xy_angle)
+			visual.global_basis *= Basis4D.from_zw(zw_angle)
+	else:
+		if xy_speed != 0.0 or zw_speed != 0.0 or yv_speed != 0.0:
+			visual_5D.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
+			visual_5D.global_basis *= Basis4D.from_xy(xy_angle)
+			visual_5D.global_basis *= Basis4D.from_zw(zw_angle)
+			visual_5D.euler_5D.y = yv_angle
 
 func _input(event):
 	if event is InputEventKey:
@@ -263,3 +287,12 @@ func import_5D_off(file_path: String) -> Mesh5D:
 
 func _on_axes_toggled(toggled_on):
 	axes.visible = toggled_on
+
+func _yv_speed(value):
+	yv_speed = value
+
+func _zw_speed(value):
+	zw_speed = value
+
+func _xy_speed(value):
+	xy_speed = value
