@@ -1,5 +1,11 @@
-[gd_resource type="ArrayWireMesh4D" format=4 uid="uid://df30ctm2jhum"]
+[gd_resource type="ArrayWireMesh4D" load_steps=2 format=4 uid="uid://df30ctm2jhum"]
+
+[sub_resource type="WireMaterial4D" id="WireMaterial4D_8qtru"]
+line_thickness = 2.0
+albedo_source = 2
+albedo_color_array = PackedColorArray(1, 0.12549, 0, 1, 0, 1, 0, 1, 0, 0.501961, 1, 1, 1, 1, 0, 1)
 
 [resource]
+material = SubResource("WireMaterial4D_8qtru")
 edge_indices = PackedInt32Array(0, 1, 2, 3, 4, 5, 6, 7)
-vertices = PackedVector4Array(-1, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 1)
+vertices = PackedVector4Array(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1)

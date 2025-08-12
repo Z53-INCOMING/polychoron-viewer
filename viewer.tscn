@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b5e205wj23gh7"]
+[gd_scene load_steps=6 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
-[ext_resource type="ArrayWireMesh4D" uid="uid://c6p28apifmx02" path="res://escape_message.tres" id="2_wceh5"]
+[ext_resource type="ArrayWireMesh4D" path="res://escape_message.tres" id="2_wceh5"]
+[ext_resource type="PackedScene" uid="uid://bbyewgip236rr" path="res://mesh_instance_5d.tscn" id="3_ecl0n"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://df30ctm2jhum" path="res://axes.tres" id="4_70cvx"]
 
 [sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
 line_thickness = 8.0
@@ -25,6 +27,14 @@ depth_fade_start = 3.5
 [node name="Visual" type="MeshInstance4D" parent="."]
 material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_wceh5")
+
+[node name="Visual5D" parent="." instance=ExtResource("3_ecl0n")]
+visible = false
+
+[node name="Axes" type="MeshInstance4D" parent="."]
+basis = Projection(0.75, 0, 0, 0, 0, 0.75, 0, 0, 0, 0, 0.75, 0, 0, 0, 0, 0.75)
+visible = false
+mesh = ExtResource("4_70cvx")
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
@@ -174,6 +184,20 @@ layout_mode = 2
 size_flags_horizontal = 2
 text = "Replace Every Edge With 2 Smaller Copies"
 
+[node name="Axes" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Button" type="CheckBox" parent="UI/Vertical/Axes"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="UI/Vertical/Axes"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Show Axes"
+
 [node name="Tutorial" type="Label" parent="UI/Vertical"]
 layout_mode = 2
 size_flags_horizontal = 2
@@ -190,7 +214,7 @@ R to reset W position, then rotation"
 [node name="Load" type="Button" parent="UI/Vertical"]
 layout_mode = 2
 size_flags_vertical = 10
-text = "Load Model (.off, .txt, .tres)"
+text = "Load Model (.off, .tres)"
 
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
@@ -201,4 +225,5 @@ text = "Load Model (.off, .txt, .tres)"
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeDistanceFocus/Slider" to="." method="_camera_w_fade_distance_focus_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeSlopeFocus/Slider" to="." method="_camera_w_fade_slope_focus_changed"]
 [connection signal="pressed" from="UI/Vertical/Subdivide/Button" to="." method="_on_subdivide"]
+[connection signal="toggled" from="UI/Vertical/Axes/Button" to="." method="_on_axes_toggled"]
 [connection signal="pressed" from="UI/Vertical/Load" to="." method="_on_load_pressed"]

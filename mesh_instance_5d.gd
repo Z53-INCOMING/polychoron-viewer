@@ -71,4 +71,5 @@ func calculate_intersection(point_1_xyzw: Vector4, point_1_v: float, point_2_xyz
 	return lerp(point_1_xyzw, point_2_xyzw, inbetween_fraction)
 
 func _process(delta):
-	slice()
+	if visible and mesh:
+		slice()

@@ -4,6 +4,8 @@ var mouse_sensitivity := 0.004 * (2560.0 / float(ProjectSettings.get_setting("di
 
 @onready var camera = $Camera
 @onready var visual = $Visual
+@onready var visual_5D = $Visual5D
+@onready var axes = $Axes
 @onready var ui = $UI
 
 var zoom := 1.0
@@ -31,11 +33,19 @@ func _process(delta):
 	camera.w_fade_slope = lerpf(camera.w_fade_slope, camera_w_fade_slope_focus if Input.is_action_pressed("focus") else camera_w_fade_slope, 1.0 - pow(2.0, -delta / 0.1))
 	
 	if Input.is_action_pressed("ana"):
-		visual.position.w -= (delta / zoom) / 2.0
+		if visual_5D.visible:
+			visual_5D.v_pos -= (delta / zoom) / 2.0
+		else:
+			visual.position.w -= (delta / zoom) / 2.0
 	if Input.is_action_pressed("kata"):
-		visual.position.w += (delta / zoom) / 2.0
+		if visual_5D.visible:
+			visual_5D.v_pos -= (delta / zoom) / 2.0
+		else:
+			visual.position.w += (delta / zoom) / 2.0
 	if Input.is_action_just_pressed("reset view"):
 		reset_view(false)
+	
+	axes.global_basis = Projection.IDENTITY
 
 func _input(event):
 	if event is InputEventKey:
@@ -74,7 +84,10 @@ func _input(event):
 			basis *= Basis4D.from_zx(event.relative.x * -mouse_sensitivity)
 			basis *= Basis4D.from_yz(event.relative.y * -mouse_sensitivity)
 	
-	visual.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
+	if visual.visible:
+		visual.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
+	else:
+		visual_5D.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
 
 func _camera_fade_start_changed(value):
 	camera_fade_start = value
@@ -118,17 +131,102 @@ func _on_load_pressed():
 
 func _on_file_dialog_file_selected(path: String):
 	if path.ends_with("tres"):
-		visual.mesh = ResourceLoader.load(path)
-	else:
-		var off_doc: OFFDocument4D = OFFDocument4D.load_from_file(path)
-		var wire_mesh: ArrayWireMesh4D = off_doc.generate_wire_mesh_4d()
+		var mesh = ResourceLoader.load(path)
 		
-		visual.mesh = wire_mesh
+		if mesh is ArrayWireMesh4D or mesh is ArrayTetraMesh4D:
+			visual.mesh = mesh
+			visual.visible = true
+			visual_5D.visible = false
+		elif mesh is Mesh5D:
+			visual.visible = false
+			visual_5D.visible = true
+			visual_5D.mesh = mesh
+	else:
+		var file := FileAccess.open(path, FileAccess.READ)
+		var dimensions := 0
+		for i in 6:
+			var line := file.get_line()
+			if line == "4OFF":
+				dimensions = 4
+				break
+			if line == "3OFF":
+				dimensions = 3
+				break
+			if line == "5OFF":
+				dimensions = 5
+		
+		if dimensions < 5:
+			var off_doc: OFFDocument4D = OFFDocument4D.load_from_file(path)
+			var wire_mesh: ArrayWireMesh4D = off_doc.generate_wire_mesh_4d()
+			
+			visual.mesh = wire_mesh
+			visual.visible = true
+			visual_5D.visible = false
+		elif dimensions == 5:
+			visual_5D.visible = true
+			visual.visible = false
+			
+			import_5D_off(path)
 	
 	reset_view()
 
 func _on_subdivide():
-	if visual.mesh:
+	if visual.mesh and visual.visible:
 		var mesh = visual.mesh.duplicate()
 		Model.subdivide_edges(mesh)
 		visual.mesh = mesh
+
+func import_5D_off(file_path: String) -> Mesh5D:
+	var mesh := Mesh5D.new()
+	
+	var off := FileAccess.open(file_path, FileAccess.READ)
+	
+	var text := off.get_as_text()
+	
+	var lines := text.split("\n")
+	
+	var vert_count := 0
+	var face_count := 0
+	
+	for i in 6:
+		if lines[i] == "# Vertices, Faces, Edges, Cells, Tera":
+			var numbers := lines[i + 1].split(" ")
+			vert_count = int(numbers[0])
+			face_count = int(numbers[1])
+	
+	var mode := 0
+	
+	for line in lines:
+		match mode:
+			1:
+				if mesh.vertices_v.size() != vert_count:
+					var vertices_text = line.split(" ")
+					var vertices = []
+					for vert in vertices_text:
+						vertices.append(float(vert))
+					mesh.vertices_xyzw.append(Vector4(vertices[0], vertices[1], vertices[2], vertices[3]))
+					mesh.vertices_v.append(vertices[4])
+			2:
+				if line == "":
+					break
+				else:
+					var face_text := line.split(" ")
+					var face = []
+					for vert_id in face_text:
+						face.append(int(vert_id))
+					face.remove_at(0)
+					
+					for id in face.size() - 2:
+						mesh.triangles.append(face[0])
+						mesh.triangles.append(face[id + 1])
+						mesh.triangles.append(face[id + 2])
+		
+		if line == "# Vertices":
+			mode = 1
+		if line == "# Faces":
+			mode = 2
+	
+	return mesh
+
+func _on_axes_toggled(toggled_on):
+	axes.visible = toggled_on
