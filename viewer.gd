@@ -21,9 +21,21 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
 
+func reset_view(fully = true):
+	if visual.position.w == 0.0 or fully:
+		basis = Projection.IDENTITY
+	visual.position.w = 0.0
+
 func _process(delta):
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
 	camera.w_fade_slope = lerpf(camera.w_fade_slope, camera_w_fade_slope_focus if Input.is_action_pressed("focus") else camera_w_fade_slope, 1.0 - pow(2.0, -delta / 0.1))
+	
+	if Input.is_action_pressed("ana"):
+		visual.position.w -= (delta / zoom) / 2.0
+	if Input.is_action_pressed("kata"):
+		visual.position.w += (delta / zoom) / 2.0
+	if Input.is_action_just_pressed("reset view"):
+		reset_view(false)
 
 func _input(event):
 	if event is InputEventKey:
@@ -113,8 +125,7 @@ func _on_file_dialog_file_selected(path: String):
 		
 		visual.mesh = wire_mesh
 	
-	basis = Projection.IDENTITY
-	visual.position.w = 0.0
+	reset_view()
 
 
 func _on_subdivide():

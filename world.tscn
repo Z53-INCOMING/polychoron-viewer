@@ -23,7 +23,6 @@ depth_fade_mode = 3
 depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
-position = Vector4(0, 0, 0, 1)
 material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_cur7m")
 
@@ -183,7 +182,10 @@ Hold control while scrolling to change the size of the image
 Scroll to zoom in and out
 Hold right click to focus (changes your 4D FOV to alternate values)
 Mouse to rotate ZX and ZY, left click + mouse to rotate WX and WY
-Back mouse button to rotate XY and ZW"
+Back mouse button to rotate XY and ZW
+I recommend pressing \"subdivide edges\" 3 or 4 times when you boot up a small polytope
+Q and E to scroll through W (looks great while focusing with subdivided edges)
+R to reset W position, then rotation"
 
 [node name="Load" type="Button" parent="UI/Vertical"]
 layout_mode = 2
