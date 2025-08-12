@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
-[ext_resource type="ArrayWireMesh4D" path="res://escape_message.tres" id="2_wceh5"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://bgf7l3ggm678q" path="res://escape_message.tres" id="2_wceh5"]
 [ext_resource type="PackedScene" uid="uid://bbyewgip236rr" path="res://mesh_instance_5d.tscn" id="3_ecl0n"]
 [ext_resource type="ArrayWireMesh4D" uid="uid://df30ctm2jhum" path="res://axes.tres" id="4_70cvx"]
 
@@ -13,7 +13,6 @@ script = ExtResource("1_ql75x")
 
 [node name="Camera" type="Camera4D" parent="."]
 position = Vector4(0, 0, 4, 0)
-current = true
 focal_length_4d = 2.0
 clip_far = 5.0
 w_fade_mode = 3
@@ -43,7 +42,8 @@ size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.tres", "*.off")
+filters = PackedStringArray("*.off,*.tres")
+use_native_dialog = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
@@ -262,7 +262,9 @@ R to reset W position, then rotation
 5D mesh loading isn't quite as stable as 4D. With 5D, Q and E move your V coordinate. I
 highly reccomend having axes turned on, since with WASD1234 you can rotate along global
 nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D
-mesh which can be viewed the same."
+mesh which can be viewed the same.
+
+v1.0.0"
 
 [node name="Load" type="Button" parent="UI/Vertical"]
 layout_mode = 2
