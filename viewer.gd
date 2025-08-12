@@ -90,20 +90,19 @@ func _camera_w_fade_slope_focus_changed(value):
 
 func update_camera():
 	camera.depth_fade_start = camera_fade_start
-	if camera.depth_fade:
+	if camera.depth_fade_mode == 3:
 		camera.clip_far = camera_fade_end
 	else:
 		camera.clip_far = 256.0
 
 func _depth_fade_toggled(toggled_on):
-	camera.depth_fade = toggled_on
+	camera.depth_fade_mode = 3 if toggled_on else 0
 	update_camera()
 
 func _on_load_pressed():
 	var screen_size := Vector2i(2560, 1440)
 	var size := screen_size / 2
 	$FileDialog.popup(Rect2i((screen_size - size) / 2, size))
-
 
 func _on_file_dialog_file_selected(path: String):
 	if path.ends_with("tres"):

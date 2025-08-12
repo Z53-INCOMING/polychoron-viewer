@@ -19,7 +19,7 @@ w_fade_color_negative = Color(0, 0.501961, 1, 1)
 w_fade_color_positive = Color(1, 0.501961, 0, 1)
 w_fade_distance = 3.0
 w_fade_slope = 0.0
-depth_fade = true
+depth_fade_mode = 3
 depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
