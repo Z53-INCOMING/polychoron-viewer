@@ -24,9 +24,15 @@ func _ready():
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
 
 func reset_view(fully = true):
-	if visual.position.w == 0.0 or fully:
-		basis = Projection.IDENTITY
-	visual.position.w = 0.0
+	if visual.visible:
+		if visual.position.w == 0.0 or fully:
+			basis = Projection.IDENTITY
+		visual.position.w = 0.0
+	else:
+		if visual_5D.v_pos == 0.0 or fully:
+			basis = Projection.IDENTITY
+			visual_5D.euler_5D = Vector4.ZERO
+		visual_5D.v_pos = 0.0
 
 func _process(delta):
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
@@ -39,7 +45,7 @@ func _process(delta):
 			visual.position.w -= (delta / zoom) / 2.0
 	if Input.is_action_pressed("kata"):
 		if visual_5D.visible:
-			visual_5D.v_pos -= (delta / zoom) / 2.0
+			visual_5D.v_pos += (delta / zoom) / 2.0
 		else:
 			visual.position.w += (delta / zoom) / 2.0
 	if Input.is_action_just_pressed("reset view"):
@@ -72,6 +78,12 @@ func _input(event):
 			else:
 				zoom *= 6.0 / 7.0
 		visual.material_override.line_thickness = line_thickness
+		if visual_5D.mesh:
+			if visual_5D.mesh.material:
+				visual_5D.mesh.material.line_thickness = line_thickness
+			else:
+				visual_5D.mesh.material = WireMaterial4D.new()
+				visual_5D.mesh.material.line_thickness = line_thickness
 	
 	if event is InputEventMouseMotion and !ui.visible:
 		if Input.is_action_pressed("4d look"):
@@ -154,6 +166,7 @@ func _on_file_dialog_file_selected(path: String):
 				break
 			if line == "5OFF":
 				dimensions = 5
+				break
 		
 		if dimensions < 5:
 			var off_doc: OFFDocument4D = OFFDocument4D.load_from_file(path)
@@ -166,7 +179,7 @@ func _on_file_dialog_file_selected(path: String):
 			visual_5D.visible = true
 			visual.visible = false
 			
-			import_5D_off(path)
+			visual_5D.mesh = import_5D_off(path)
 	
 	reset_view()
 
@@ -189,10 +202,11 @@ func import_5D_off(file_path: String) -> Mesh5D:
 	var face_count := 0
 	
 	for i in 6:
-		if lines[i] == "# Vertices, Faces, Edges, Cells, Tera":
+		if lines[i].contains("Edges"):
 			var numbers := lines[i + 1].split(" ")
 			vert_count = int(numbers[0])
 			face_count = int(numbers[1])
+			break
 	
 	var mode := 0
 	
@@ -207,7 +221,7 @@ func import_5D_off(file_path: String) -> Mesh5D:
 					mesh.vertices_xyzw.append(Vector4(vertices[0], vertices[1], vertices[2], vertices[3]))
 					mesh.vertices_v.append(vertices[4])
 			2:
-				if line == "":
+				if line.to_lower().contains("cells"):
 					break
 				else:
 					var face_text := line.split(" ")
@@ -221,9 +235,9 @@ func import_5D_off(file_path: String) -> Mesh5D:
 						mesh.triangles.append(face[id + 1])
 						mesh.triangles.append(face[id + 2])
 		
-		if line == "# Vertices":
+		if line.to_lower().contains("vertices") and !line.to_lower().contains("faces"):
 			mode = 1
-		if line == "# Faces":
+		elif line.to_lower().contains("faces") and !line.to_lower().contains("vertices"):
 			mode = 2
 	
 	return mesh

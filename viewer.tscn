@@ -43,7 +43,7 @@ size = Vector2i(640, 360)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.txt", "*.tres", "*.off")
+filters = PackedStringArray("*.tres", "*.off")
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
