@@ -13,6 +13,7 @@ script = ExtResource("1_ql75x")
 
 [node name="Camera" type="Camera4D" parent="."]
 position = Vector4(0, 0, 4, 0)
+current = true
 focal_length_4d = 2.0
 clip_far = 5.0
 w_fade_mode = 3
@@ -44,6 +45,7 @@ ok_button_text = "Open"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.off,*.tres")
+use_native_dialog = true
 
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false

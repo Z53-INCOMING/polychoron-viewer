@@ -183,7 +183,6 @@ func _on_load_pressed():
 	var screen_size := Vector2i(2560, 1440)
 	var size := screen_size / 2
 	$FileDialog.popup(Rect2i((screen_size - size) / 2, size))
-	$FileDialog.current_path = ProjectSettings.globalize_path("res://library/")
 
 func _on_file_dialog_file_selected(path: String):
 	if path.ends_with("tres"):
