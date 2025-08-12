@@ -114,3 +114,11 @@ func _on_file_dialog_file_selected(path: String):
 		visual.mesh = wire_mesh
 	
 	basis = Projection.IDENTITY
+	visual.position.w = 0.0
+
+
+func _on_subdivide():
+	if visual.mesh:
+		var mesh = visual.mesh.duplicate()
+		Model.subdivide_edges(mesh)
+		visual.mesh = mesh

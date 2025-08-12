@@ -23,6 +23,7 @@ depth_fade_mode = 3
 depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
+position = Vector4(0, 0, 0, 1)
 material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_cur7m")
 
@@ -160,6 +161,20 @@ layout_mode = 2
 size_flags_horizontal = 2
 text = "Camera W Fade Slope When Focusing"
 
+[node name="Subdivide" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="UI/Vertical/Subdivide"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Subdivide Edges"
+
+[node name="Label" type="Label" parent="UI/Vertical/Subdivide"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "Replace Every Edge With 2 Smaller Copies"
+
 [node name="Tutorial" type="Label" parent="UI/Vertical"]
 layout_mode = 2
 size_flags_horizontal = 2
@@ -183,4 +198,5 @@ text = "Load Model (.off, .txt, .tres)"
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeSlope/Slider" to="." method="_camera_w_fade_slope_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeDistanceFocus/Slider" to="." method="_camera_w_fade_distance_focus_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeSlopeFocus/Slider" to="." method="_camera_w_fade_slope_focus_changed"]
+[connection signal="pressed" from="UI/Vertical/Subdivide/Button" to="." method="_on_subdivide"]
 [connection signal="pressed" from="UI/Vertical/Load" to="." method="_on_load_pressed"]
