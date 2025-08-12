@@ -127,7 +127,6 @@ func _on_file_dialog_file_selected(path: String):
 	
 	reset_view()
 
-
 func _on_subdivide():
 	if visual.mesh:
 		var mesh = visual.mesh.duplicate()

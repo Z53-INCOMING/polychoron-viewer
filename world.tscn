@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
-[ext_resource type="ArrayWireMesh4D" uid="uid://cj0vljtsjsyao" path="res://Rectified_tesseract.off" id="2_cur7m"]
+[ext_resource type="ArrayWireMesh4D" uid="uid://c6p28apifmx02" path="res://escape_message.tres" id="2_wceh5"]
 
 [sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
 line_thickness = 8.0
@@ -24,7 +24,7 @@ depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
 material_override = SubResource("WireMaterial4D_v8gev")
-mesh = ExtResource("2_cur7m")
+mesh = ExtResource("2_wceh5")
 
 [node name="FileDialog" type="FileDialog" parent="."]
 title = "Open a File"
