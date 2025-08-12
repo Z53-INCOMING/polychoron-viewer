@@ -46,7 +46,6 @@ access = 2
 filters = PackedStringArray("*.tres", "*.off")
 
 [node name="UI" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="Vertical" type="VBoxContainer" parent="UI"]
 custom_minimum_size = Vector2(0, 1440)
@@ -209,7 +208,12 @@ Mouse to rotate ZX and ZY, left click + mouse to rotate WX and WY
 Back mouse button to rotate XY and ZW
 I recommend pressing \"subdivide edges\" 3 or 4 times when you boot up a small polytope
 Q and E to scroll through W (looks great while focusing with subdivided edges)
-R to reset W position, then rotation"
+R to reset W position, then rotation
+
+5D mesh loading isn't quite as stable as 4D. With 5D, Q and E move your V coordinate. I
+highly reccomend having axes turned on, since with WASD1234 you can rotate along global
+nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D
+mesh which can be viewed the same."
 
 [node name="Load" type="Button" parent="UI/Vertical"]
 layout_mode = 2
