@@ -266,7 +266,7 @@ highly reccomend having axes turned on, since with WASD1234 you can rotate along
 nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D
 mesh which can be viewed the same.
 
-v1.0.0"
+v1.0.1"
 
 [node name="Load" type="Button" parent="UI/Vertical"]
 layout_mode = 2

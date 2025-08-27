@@ -161,7 +161,7 @@ func _camera_w_fade_slope_changed(value):
 	update_camera()
 
 func _camera_w_fade_distance_focus_changed(value):
-	camera_w_fade_slope_focus = value
+	camera_w_fade_distance_focus = value
 	update_camera()
 
 func _camera_w_fade_slope_focus_changed(value):
