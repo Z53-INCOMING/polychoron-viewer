@@ -7,6 +7,9 @@ var mouse_sensitivity := 0.004 * (2560.0 / float(ProjectSettings.get_setting("di
 @onready var visual_5D = $Visual5D
 @onready var axes = $Axes
 @onready var ui = $UI
+@onready var filename_label = $Filename
+
+var revealed := 0.0
 
 var zoom := 1.0
 
@@ -27,6 +30,8 @@ var xy_speed := 0.0
 var zw_speed := 0.0
 var yv_speed := 0.0
 
+var selected := ""
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
@@ -43,6 +48,13 @@ func reset_view(fully = true):
 		visual_5D.v_pos = 0.001
 
 func _process(delta):
+	if Input.is_action_just_pressed("reveal"):
+		filename_label.text = selected
+		revealed = 3.0
+	
+	revealed -= delta
+	filename_label.modulate.a = clampf(revealed, 0.0, 1.0)
+	
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
 	camera.w_fade_slope = lerpf(camera.w_fade_slope, camera_w_fade_slope_focus if Input.is_action_pressed("focus") else camera_w_fade_slope, 1.0 - pow(2.0, -delta / 0.1))
 	
@@ -185,6 +197,9 @@ func _on_load_pressed():
 	$FileDialog.popup(Rect2i((screen_size - size) / 2, size))
 
 func _on_file_dialog_file_selected(path: String):
+	load_polytope(path)
+
+func load_polytope(path: String):
 	if path.ends_with("tres"):
 		var mesh = ResourceLoader.load(path)
 		
@@ -296,3 +311,21 @@ func _zw_speed(value):
 
 func _xy_speed(value):
 	xy_speed = value
+
+func _on_random_model_loaded():
+	var screen_size := Vector2i(2560, 1440)
+	var size := screen_size / 2
+	$FileDialog2.popup(Rect2i((screen_size - size) / 2, size))
+
+func _on_folder_selected(dir: String):
+	var folder := DirAccess.open(dir)
+	var files = folder.get_files()
+	var accepted_files = PackedStringArray()
+	
+	for file_path in files:
+		if file_path.ends_with(".off") or file_path.ends_with(".tres"):
+			accepted_files.append(file_path)
+	
+	if !accepted_files.is_empty():
+		selected = accepted_files[randi() % accepted_files.size()]
+		load_polytope(dir + "/" + selected)

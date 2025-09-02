@@ -47,6 +47,27 @@ access = 2
 filters = PackedStringArray("*.off,*.tres")
 use_native_dialog = true
 
+[node name="FileDialog2" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Select a folder to choose a random polytope from"
+position = Vector2i(640, 360)
+size = Vector2i(640, 360)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+filters = PackedStringArray("*.off,*.tres")
+use_native_dialog = true
+
+[node name="Filename" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0)
+offset_top = 1352.0
+offset_right = 2560.0
+offset_bottom = 1440.0
+size_flags_horizontal = 2
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 2
+vertical_alignment = 2
+
 [node name="UI" type="CanvasLayer" parent="."]
 visible = false
 
@@ -249,6 +270,7 @@ size_flags_horizontal = 2
 text = "Show Axes"
 
 [node name="Tutorial" type="Label" parent="UI/Vertical"]
+custom_minimum_size = Vector2(724, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Hold shift while scrolling to change line thickness
@@ -257,23 +279,33 @@ Scroll to zoom in and out
 Hold right click to focus (changes your 4D FOV to alternate values)
 Mouse to rotate ZX and ZY, left click + mouse to rotate WX and WY
 Back mouse button to rotate XY and ZW
-I recommend pressing \"subdivide edges\" 3 or 4 times when you boot up a small polytope
+I recommend pressing \"subdivide edges\" 3 or 4 times when you boot up a polytope
 Q and E to scroll through W (looks great while focusing with subdivided edges)
 R to reset W position, then rotation
 
-5D mesh loading isn't quite as stable as 4D. With 5D, Q and E move your V coordinate. I
-highly reccomend having axes turned on, since with WASD1234 you can rotate along global
-nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D
-mesh which can be viewed the same.
+5D mesh loading isn't quite as stable as 4D. With 5D, Q and E move your V coordinate. I highly reccomend having axes turned on, since with WASD1234 you can rotate along global nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D mesh which can be viewed the same.
 
-v1.0.1"
+If you press \"Load Random Model From Folder\", you can press v to reveal the name of the polytope. This is useful for guessing games.
 
-[node name="Load" type="Button" parent="UI/Vertical"]
+v1.1.0"
+autowrap_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="RandomModel" type="Button" parent="UI/Vertical/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Load Random Model From Folder"
+
+[node name="Load" type="Button" parent="UI/Vertical/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 text = "Load Model (.off, .tres)"
 
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="dir_selected" from="FileDialog2" to="." method="_on_folder_selected"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
 [connection signal="toggled" from="UI/Vertical/CameraFade/Button" to="." method="_depth_fade_toggled"]
@@ -286,4 +318,5 @@ text = "Load Model (.off, .tres)"
 [connection signal="value_changed" from="UI/Vertical/YVSpeed/Slider" to="." method="_yv_speed"]
 [connection signal="pressed" from="UI/Vertical/Subdivide/Button" to="." method="_on_subdivide"]
 [connection signal="toggled" from="UI/Vertical/Axes/Button" to="." method="_on_axes_toggled"]
-[connection signal="pressed" from="UI/Vertical/Load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="UI/Vertical/VBoxContainer/RandomModel" to="." method="_on_random_model_loaded"]
+[connection signal="pressed" from="UI/Vertical/VBoxContainer/Load" to="." method="_on_load_pressed"]
