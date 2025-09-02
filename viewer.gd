@@ -10,6 +10,8 @@ var mouse_sensitivity := 0.004 * (2560.0 / float(ProjectSettings.get_setting("di
 @onready var filename_label = $Filename
 
 var revealed := 0.0
+var selected := ""
+var current_dir := ""
 
 var zoom := 1.0
 
@@ -30,11 +32,10 @@ var xy_speed := 0.0
 var zw_speed := 0.0
 var yv_speed := 0.0
 
-var selected := ""
-
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
+	randomize()
 
 func reset_view(fully = true):
 	if visual.visible:
@@ -54,6 +55,12 @@ func _process(delta):
 	
 	revealed -= delta
 	filename_label.modulate.a = clampf(revealed, 0.0, 1.0)
+	
+	if Input.is_action_just_pressed("next"):
+		if current_dir != "":
+			var current_file := selected
+			while current_file == selected:
+				_on_folder_selected(current_dir)
 	
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
 	camera.w_fade_slope = lerpf(camera.w_fade_slope, camera_w_fade_slope_focus if Input.is_action_pressed("focus") else camera_w_fade_slope, 1.0 - pow(2.0, -delta / 0.1))
@@ -318,6 +325,7 @@ func _on_random_model_loaded():
 	$FileDialog2.popup(Rect2i((screen_size - size) / 2, size))
 
 func _on_folder_selected(dir: String):
+	current_dir = dir
 	var folder := DirAccess.open(dir)
 	var files = folder.get_files()
 	var accepted_files = PackedStringArray()
