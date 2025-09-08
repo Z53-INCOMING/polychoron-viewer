@@ -107,7 +107,7 @@ static func subdivide_edges(mesh: ArrayWireMesh4D):
 		edge_indices.append(edge_indices[i + 1])
 		edge_indices[i + 1] = new_vert_index
 		
-		if mesh.material:
+		if mesh.material.albedo_source != WireMaterial4D.WIRE_COLOR_SOURCE_SINGLE_COLOR:
 			mesh.material.append_albedo_color(mesh.material.get_albedo_color_array()[i / 2])
 	mesh.edge_indices = edge_indices
 
