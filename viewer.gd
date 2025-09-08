@@ -139,13 +139,9 @@ func _input(event):
 				camera.focal_length_4d *= 7.0 / 8.0
 			else:
 				zoom *= 6.0 / 7.0
-		visual.material_override.line_thickness = line_thickness
+		visual.mesh.material.line_thickness = line_thickness
 		if visual_5D.mesh:
-			if visual_5D.mesh.material:
-				visual_5D.mesh.material.line_thickness = line_thickness
-			else:
-				visual_5D.mesh.material = WireMaterial4D.new()
-				visual_5D.mesh.material.line_thickness = line_thickness
+			visual_5D.mesh.material.line_thickness = line_thickness
 	
 	if event is InputEventMouseMotion and !ui.visible:
 		if Input.is_action_pressed("4d look"):
@@ -212,15 +208,26 @@ func load_polytope(path: String):
 		
 		if mesh is ArrayWireMesh4D or mesh is ArrayTetraMesh4D:
 			visual.mesh = mesh
+			
+			if !visual.mesh.material:
+				visual.mesh.material = WireMaterial4D.new()
+			visual.mesh.material.line_thickness = line_thickness
+			
 			visual.visible = true
 			visual_5D.visible = false
 		elif mesh is Mesh5D:
 			visual.visible = false
 			visual_5D.visible = true
 			visual_5D.mesh = mesh
+			
+			if !visual_5D.mesh.material:
+				visual_5D.mesh.material = WireMaterial4D.new()
+			visual_5D.mesh.material.line_thickness = line_thickness
+		else:
+			OS.alert("Godot resource was not of type ArrayWireMesh4D or Mesh5D.", "Couldn't load mesh!")
 	else:
 		var file := FileAccess.open(path, FileAccess.READ)
-		var dimensions := 0
+		var dimensions := -1
 		for i in 6:
 			var line := file.get_line()
 			if line == "4OFF":
@@ -234,10 +241,14 @@ func load_polytope(path: String):
 				break
 		
 		if dimensions < 5:
-			var off_doc: OFFDocument4D = OFFDocument4D.load_from_file(path)
-			var wire_mesh: ArrayWireMesh4D = off_doc.generate_wire_mesh_4d()
+			var off_doc: OFFDocument4D = OFFDocument4D.import_load_from_file(path)
+			var wire_mesh: ArrayWireMesh4D = off_doc.import_generate_wire_mesh_4d()
 			
 			visual.mesh = wire_mesh
+			if !visual.mesh.material:
+				visual.mesh.material = WireMaterial4D.new()
+			visual.mesh.material.line_thickness = line_thickness
+			
 			visual.visible = true
 			visual_5D.visible = false
 		elif dimensions == 5:
@@ -245,6 +256,18 @@ func load_polytope(path: String):
 			visual.visible = false
 			
 			visual_5D.mesh = import_5D_off(path)
+			if !visual_5D.mesh.material:
+				visual_5D.mesh.material = WireMaterial4D.new()
+			visual_5D.mesh.material.line_thickness = line_thickness
+		else:
+			if dimensions < 0:
+				OS.alert("Couldn't determine polytope's rank, or rank is invalid.", "Couldn't load polytope!")
+			elif dimensions < 3:
+				OS.alert("This program supports rank 3 polytopes minimum. You can replace the top of the file with 3OFF and then add 0 to the end of every vertex and then add one face for a sometimes quick fix.", "Couldn't load polytope!")
+			elif dimensions > 5:
+				OS.alert("Too many dimensions! This program supports rank 5 maximum.", "Couldn't load polytope!")
+			else:
+				OS.alert("I'm not sure what happened. The rank isn't -1 which means failed to determine, it isn't less than 0, it isn't less than 3, and it's not greater than 5, and yet it still failed because of a weird dimension count. The fuck did you do? Rank 4i?", "Couldn't load polytope!")
 	
 	reset_view()
 
@@ -337,3 +360,21 @@ func _on_folder_selected(dir: String):
 	if !accepted_files.is_empty():
 		selected = accepted_files[randi() % accepted_files.size()]
 		load_polytope(dir + "/" + selected)
+
+func _on_material_load():
+	var screen_size := Vector2i(2560, 1440)
+	var size := screen_size / 2
+	$FileDialog3.popup(Rect2i((screen_size - size) / 2, size))
+
+func _on_material_file_selected(path):
+	var material = ResourceLoader.load(path)
+	
+	if material is WireMaterial4D:
+		if visual.visible:
+			visual.mesh.material = material
+			visual.mesh.material.line_thickness = line_thickness
+		if visual_5D.visible:
+			visual_5D.mesh.material = material
+			visual_5D.mesh.material.line_thickness = line_thickness
+	else:
+		OS.alert("Godot resource was not of the type WireMaterial4D.", "Couldn't load material!")

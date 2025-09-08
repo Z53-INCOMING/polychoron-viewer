@@ -5,11 +5,23 @@
 [ext_resource type="PackedScene" uid="uid://bbyewgip236rr" path="res://mesh_instance_5d.tscn" id="3_ecl0n"]
 [ext_resource type="ArrayWireMesh4D" uid="uid://df30ctm2jhum" path="res://axes.tres" id="4_70cvx"]
 
-[sub_resource type="WireMaterial4D" id="WireMaterial4D_v8gev"]
-line_thickness = 8.0
+[sub_resource type="Environment" id="Environment_7e2ca"]
+background_mode = 3
+glow_enabled = true
+glow_levels/1 = 1.0
+glow_levels/2 = 0.86
+glow_levels/3 = 0.71
+glow_levels/4 = 0.57
+glow_levels/5 = 0.43
+glow_levels/6 = 0.29
+glow_levels/7 = 0.14
+glow_blend_mode = 0
 
 [node name="Viewer" type="Node4D"]
 script = ExtResource("1_ql75x")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_7e2ca")
 
 [node name="Camera" type="Camera4D" parent="."]
 position = Vector4(0, 0, 4, 0)
@@ -25,7 +37,6 @@ depth_fade_mode = 3
 depth_fade_start = 3.5
 
 [node name="Visual" type="MeshInstance4D" parent="."]
-material_override = SubResource("WireMaterial4D_v8gev")
 mesh = ExtResource("2_wceh5")
 
 [node name="Visual5D" parent="." instance=ExtResource("3_ecl0n")]
@@ -47,9 +58,20 @@ access = 2
 filters = PackedStringArray("*.off,*.tres")
 use_native_dialog = true
 
+[node name="FileDialog3" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+position = Vector2i(640, 360)
+size = Vector2i(640, 360)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.tres")
+use_native_dialog = true
+
 [node name="FileDialog2" type="FileDialog" parent="."]
 auto_translate_mode = 1
-title = "Select a folder to choose a random polytope from"
+title = "Open a Directory"
 position = Vector2i(640, 360)
 size = Vector2i(640, 360)
 ok_button_text = "Select Current Folder"
@@ -207,7 +229,7 @@ step = 0.0
 [node name="Label" type="Label" parent="UI/Vertical/XYSpeed"]
 layout_mode = 2
 size_flags_horizontal = 2
-text = "XY Rotation 0 to 1 r/s"
+text = "XY Rotation 0 to 1 rev/s"
 
 [node name="ZWSpeed" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
@@ -223,7 +245,7 @@ step = 0.0
 [node name="Label" type="Label" parent="UI/Vertical/ZWSpeed"]
 layout_mode = 2
 size_flags_horizontal = 2
-text = "ZW Rotation 0 to 1 r/s"
+text = "ZW Rotation 0 to 1 rev/s"
 
 [node name="YVSpeed" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
@@ -239,7 +261,7 @@ step = 0.0
 [node name="Label" type="Label" parent="UI/Vertical/YVSpeed"]
 layout_mode = 2
 size_flags_horizontal = 2
-text = "YV Rotation 0 to 1 r/s"
+text = "YV Rotation 0 to 1 rev/s"
 
 [node name="Subdivide" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
@@ -287,7 +309,9 @@ R to reset W position, then rotation
 
 If you press \"Load Random Model From Folder\", you can press v to reveal the name of the polytope. This is useful for guessing games.
 
-v1.1.0"
+\"Load Material\" is for loading .tres materials. These are only useful if you have the godot-4d module or otherwise have Godot 4D materials and meshes for whatever reason.
+
+v1.2.0"
 autowrap_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Vertical"]
@@ -299,12 +323,18 @@ layout_mode = 2
 size_flags_vertical = 10
 text = "Load Random Model From Folder"
 
+[node name="Material" type="Button" parent="UI/Vertical/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Load Material (.tres)"
+
 [node name="Load" type="Button" parent="UI/Vertical/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 text = "Load Model (.off, .tres)"
 
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="file_selected" from="FileDialog3" to="." method="_on_material_file_selected"]
 [connection signal="dir_selected" from="FileDialog2" to="." method="_on_folder_selected"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeStart/Slider" to="." method="_camera_fade_start_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
@@ -319,4 +349,5 @@ text = "Load Model (.off, .tres)"
 [connection signal="pressed" from="UI/Vertical/Subdivide/Button" to="." method="_on_subdivide"]
 [connection signal="toggled" from="UI/Vertical/Axes/Button" to="." method="_on_axes_toggled"]
 [connection signal="pressed" from="UI/Vertical/VBoxContainer/RandomModel" to="." method="_on_random_model_loaded"]
+[connection signal="pressed" from="UI/Vertical/VBoxContainer/Material" to="." method="_on_material_load"]
 [connection signal="pressed" from="UI/Vertical/VBoxContainer/Load" to="." method="_on_load_pressed"]
