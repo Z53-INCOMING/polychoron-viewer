@@ -2,7 +2,8 @@ extends Node4D
 
 var mouse_sensitivity := 0.004 * (2560.0 / float(ProjectSettings.get_setting("display/window/size/viewport_width")))
 
-@onready var camera = $Camera
+@onready var orbit: Node4D = $Orbit
+@onready var camera = $Orbit/Camera
 @onready var visual = $Visual
 @onready var visual_5D = $Visual5D
 @onready var axes = $Axes
@@ -13,16 +14,14 @@ var revealed := 0.0
 var selected := ""
 var current_dir := ""
 
-var zoom := 1.0
+var zoom := 4.0
 
 var line_thickness := 8.0
 
-var camera_fade_start := 3.5
-var camera_fade_end := 5.0
+var camera_fade_start := -1.0
+var camera_fade_end := 0.0
 var camera_w_fade_distance := 1.0
-var camera_w_fade_slope := 0.0
 var camera_w_fade_distance_focus := 0.25
-var camera_w_fade_slope_focus := 0.0
 
 var xy_angle := 0.0
 var zw_angle := 0.0
@@ -32,21 +31,27 @@ var xy_speed := 0.0
 var zw_speed := 0.0
 var yv_speed := 0.0
 
+var wv_speed := 1.0
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.projection_type = Camera4D.PROJECTION4D_PERSPECTIVE_4D
+	
+	var command_line_arguments := OS.get_cmdline_args()
+	
+	if !command_line_arguments.is_empty():
+		var first := command_line_arguments[0]
+		if !first.begins_with("res"):
+			load_polytope(first)
+	
+	update_camera()
+	
 	randomize()
 
 func reset_view(fully = true):
-	if visual.visible:
-		if visual.position.w == 0.0 or fully:
-			basis = Projection.IDENTITY
-		visual.position.w = 0.0
-	else:
-		if visual_5D.v_pos == 0.001 or fully:
-			basis = Projection.IDENTITY
-			visual_5D.euler_5D = Vector4.ZERO
-		visual_5D.v_pos = 0.001
+	if camera.position.w == 0.0 or fully:
+		orbit.basis = Projection.IDENTITY
+	camera.position.w = 0.0
 
 func _process(delta):
 	if Input.is_action_just_pressed("reveal"):
@@ -63,18 +68,11 @@ func _process(delta):
 				_on_folder_selected(current_dir)
 	
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
-	camera.w_fade_slope = lerpf(camera.w_fade_slope, camera_w_fade_slope_focus if Input.is_action_pressed("focus") else camera_w_fade_slope, 1.0 - pow(2.0, -delta / 0.1))
 	
 	if Input.is_action_pressed("ana"):
-		if visual_5D.visible:
-			visual_5D.v_pos -= (delta / zoom) / 2.0
-		else:
-			visual.position.w -= (delta / zoom) / 2.0
+		camera.position.w += wv_speed * delta
 	if Input.is_action_pressed("kata"):
-		if visual_5D.visible:
-			visual_5D.v_pos += (delta / zoom) / 2.0
-		else:
-			visual.position.w += (delta / zoom) / 2.0
+		camera.position.w -= wv_speed * delta
 	if Input.is_action_just_pressed("reset view"):
 		reset_view(false)
 	
@@ -97,20 +95,16 @@ func _process(delta):
 		if Input.is_action_pressed("vw"):
 			visual_5D.euler_5D.w -= angular_speed * delta
 	
-	axes.global_basis = Projection.IDENTITY
-	
 	xy_angle = wrapf(xy_angle + (xy_speed * delta), 0.0, TAU)
 	zw_angle = wrapf(zw_angle + (zw_speed * delta), 0.0, TAU)
 	yv_angle = wrapf(yv_angle + (yv_speed * delta), 0.0, TAU)
 	
 	if visual.visible:
 		if xy_speed != 0.0 or zw_speed != 0.0:
-			visual.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
 			visual.global_basis *= Basis4D.from_xy(xy_angle)
 			visual.global_basis *= Basis4D.from_zw(zw_angle)
 	else:
 		if xy_speed != 0.0 or zw_speed != 0.0 or yv_speed != 0.0:
-			visual_5D.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
 			visual_5D.global_basis *= Basis4D.from_xy(xy_angle)
 			visual_5D.global_basis *= Basis4D.from_zw(zw_angle)
 			visual_5D.euler_5D.y = yv_angle
@@ -124,40 +118,39 @@ func _input(event):
 			else:
 				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			if Input.is_key_pressed(KEY_SHIFT):
-				line_thickness *= 8.0 / 7.0
-			elif Input.is_key_pressed(KEY_CTRL):
-				camera.focal_length_4d *= 8.0 / 7.0
+	if !ui.visible:
+		if event is InputEventMouseButton:
+			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+				if Input.is_key_pressed(KEY_SHIFT):
+					line_thickness *= 8.0 / 7.0
+				elif Input.is_key_pressed(KEY_CTRL):
+					camera.focal_length_4d *= 8.0 / 7.0
+				else:
+					zoom *= 6.0 / 7.0
+			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				if Input.is_key_pressed(KEY_SHIFT):
+					line_thickness *= 7.0 / 8.0
+				elif Input.is_key_pressed(KEY_CTRL):
+					camera.focal_length_4d *= 7.0 / 8.0
+				else:
+					zoom *= 7.0 / 6.0
+			visual.mesh.material.line_thickness = line_thickness
+			if visual_5D.mesh:
+				visual_5D.mesh.material.line_thickness = line_thickness
+		
+		if event is InputEventMouseMotion:
+			if Input.is_action_pressed("4d look"):
+				orbit.basis *= Basis4D.from_xw(event.relative.x * -mouse_sensitivity)
+				orbit.basis *= Basis4D.from_wy(event.relative.y * mouse_sensitivity)
+			elif Input.is_action_pressed("roll look"):
+				orbit.basis *= Basis4D.from_xy(event.relative.x * mouse_sensitivity)
+				orbit.basis *= Basis4D.from_zw(event.relative.y * mouse_sensitivity)
 			else:
-				zoom *= 7.0 / 6.0
-		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			if Input.is_key_pressed(KEY_SHIFT):
-				line_thickness *= 7.0 / 8.0
-			elif Input.is_key_pressed(KEY_CTRL):
-				camera.focal_length_4d *= 7.0 / 8.0
-			else:
-				zoom *= 6.0 / 7.0
-		visual.mesh.material.line_thickness = line_thickness
-		if visual_5D.mesh:
-			visual_5D.mesh.material.line_thickness = line_thickness
-	
-	if event is InputEventMouseMotion and !ui.visible:
-		if Input.is_action_pressed("4d look"):
-			basis *= Basis4D.from_xw(event.relative.x * -mouse_sensitivity)
-			basis *= Basis4D.from_wy(event.relative.y * mouse_sensitivity)
-		elif Input.is_action_pressed("roll look"):
-			basis *= Basis4D.from_xy(event.relative.x * mouse_sensitivity)
-			basis *= Basis4D.from_zw(event.relative.y * mouse_sensitivity)
-		else:
-			basis *= Basis4D.from_zx(event.relative.x * -mouse_sensitivity)
-			basis *= Basis4D.from_yz(event.relative.y * -mouse_sensitivity)
-	
-	if visual.visible:
-		visual.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
-	else:
-		visual_5D.global_basis = Basis4D.from_scale(Vector4.ONE * zoom)
+				orbit.basis *= Basis4D.from_zx(event.relative.x * -mouse_sensitivity)
+				orbit.basis *= Basis4D.from_yz(event.relative.y * -mouse_sensitivity)
+		
+		camera.position.z = zoom
+		update_camera()
 
 func _camera_fade_start_changed(value):
 	camera_fade_start = value
@@ -171,24 +164,16 @@ func _camera_w_fade_distance_changed(value):
 	camera_w_fade_distance = value
 	update_camera()
 
-func _camera_w_fade_slope_changed(value):
-	camera_w_fade_slope = value
-	update_camera()
-
 func _camera_w_fade_distance_focus_changed(value):
 	camera_w_fade_distance_focus = value
 	update_camera()
 
-func _camera_w_fade_slope_focus_changed(value):
-	camera_w_fade_slope_focus = value
-	update_camera()
-
 func update_camera():
-	camera.depth_fade_start = camera_fade_start
+	camera.depth_fade_start = camera_fade_start + zoom
 	if camera.depth_fade_mode == 3:
-		camera.clip_far = camera_fade_end
+		camera.clip_far = camera_fade_end + zoom
 	else:
-		camera.clip_far = 256.0
+		camera.clip_far = 7776.0 * 7776.0
 
 func _depth_fade_toggled(toggled_on):
 	camera.depth_fade_mode = 3 if toggled_on else 0
@@ -378,3 +363,7 @@ func _on_material_file_selected(path):
 			visual_5D.mesh.material.line_thickness = line_thickness
 	else:
 		OS.alert("Godot resource was not of the type WireMaterial4D.", "Couldn't load material!")
+
+
+func w_speed(value):
+	wv_speed = value

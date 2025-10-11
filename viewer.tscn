@@ -23,17 +23,20 @@ script = ExtResource("1_ql75x")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_7e2ca")
 
-[node name="Camera" type="Camera4D" parent="."]
+[node name="Orbit" type="Node4D" parent="."]
+
+[node name="Camera" type="Camera4D" parent="Orbit"]
 position = Vector4(0, 0, 4, 0)
+current = true
 focal_length_4d = 2.0
 clip_far = 5.0
 w_fade_mode = 3
 w_fade_color_negative = Color(0, 0.501961, 1, 1)
 w_fade_color_positive = Color(1, 0.501961, 0, 1)
-w_fade_distance = 3.0
+w_fade_distance = 4.0
 w_fade_slope = 0.0
 depth_fade_mode = 3
-depth_fade_start = 3.5
+depth_fade_start = 3.0
 
 [node name="Visual" type="MeshInstance4D" parent="."]
 mesh = ExtResource("2_wceh5")
@@ -100,15 +103,17 @@ offset_bottom = 40.0
 [node name="CameraFadeStart" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
 
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraFadeStart"]
+[node name="Slider" type="SpinBox" parent="UI/Vertical/CameraFadeStart"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-min_value = 2.0
-max_value = 8.0
-step = 0.0
-value = 3.5
+min_value = -6.0
+max_value = 216.0
+step = 0.25
+value = -1.0
+allow_greater = true
+allow_lesser = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraFadeStart"]
 layout_mode = 2
@@ -118,15 +123,16 @@ text = "Camera Fade Start"
 [node name="CameraFadeEnd" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
 
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraFadeEnd"]
+[node name="Slider" type="SpinBox" parent="UI/Vertical/CameraFadeEnd"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 4
-min_value = 2.0
-max_value = 8.0
-step = 0.0
-value = 5.0
+min_value = -216.0
+max_value = 6.0
+step = 0.25
+allow_greater = true
+allow_lesser = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraFadeEnd"]
 layout_mode = 2
@@ -151,68 +157,40 @@ text = "Camera Depth Fade"
 [node name="CameraWFadeDistance" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
 
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeDistance"]
+[node name="Slider" type="SpinBox" parent="UI/Vertical/CameraWFadeDistance"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 4
 max_value = 4.0
-step = 0.0
+step = 0.125
 value = 1.0
+allow_greater = true
+allow_lesser = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistance"]
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Camera W Fade Distance"
 
-[node name="CameraWFadeSlope" type="HBoxContainer" parent="UI/Vertical"]
-layout_mode = 2
-
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeSlope"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-size_flags_horizontal = 2
-size_flags_vertical = 4
-max_value = 1.5
-step = 0.0
-
-[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeSlope"]
-layout_mode = 2
-size_flags_horizontal = 2
-text = "Camera W Fade Slope"
-
 [node name="CameraWFadeDistanceFocus" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
 
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeDistanceFocus"]
+[node name="Slider" type="SpinBox" parent="UI/Vertical/CameraWFadeDistanceFocus"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 4
 max_value = 4.0
-step = 0.0
+step = 0.125
 value = 0.25
+allow_greater = true
+allow_lesser = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistanceFocus"]
 layout_mode = 2
 size_flags_horizontal = 2
 text = "Camera W Fade Distance When Focusing"
-
-[node name="CameraWFadeSlopeFocus" type="HBoxContainer" parent="UI/Vertical"]
-layout_mode = 2
-
-[node name="Slider" type="HSlider" parent="UI/Vertical/CameraWFadeSlopeFocus"]
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-size_flags_horizontal = 2
-size_flags_vertical = 4
-max_value = 1.5
-step = 0.0
-
-[node name="Label" type="Label" parent="UI/Vertical/CameraWFadeSlopeFocus"]
-layout_mode = 2
-size_flags_horizontal = 2
-text = "Camera W Fade Slope When Focusing"
 
 [node name="XYSpeed" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
@@ -262,6 +240,26 @@ layout_mode = 2
 size_flags_horizontal = 2
 text = "YV Rotation 0 to 1 rev/s"
 
+[node name="WSpeed" type="HBoxContainer" parent="UI/Vertical"]
+layout_mode = 2
+
+[node name="Slider" type="SpinBox" parent="UI/Vertical/WSpeed"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 4
+min_value = 0.25
+max_value = 36.0
+step = 0.0
+value = 1.0
+allow_greater = true
+allow_lesser = true
+
+[node name="Label" type="Label" parent="UI/Vertical/WSpeed"]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "W/V Speed"
+
 [node name="Subdivide" type="HBoxContainer" parent="UI/Vertical"]
 layout_mode = 2
 
@@ -306,11 +304,11 @@ R to reset W position, then rotation
 
 5D mesh loading isn't quite as stable as 4D. With 5D, Q and E move your V coordinate. I highly reccomend having axes turned on, since with WASD1234 you can rotate along global nV planes. You also can't subdivide 5D meshes, sorry. Also, in 5D, things are sliced to a 4D mesh which can be viewed the same.
 
-If you press \"Load Random Model From Folder\", you can press v to reveal the name of the polytope. This is useful for guessing games.
+If you press \"Load Random Model From Folder\", you can press v to reveal the name of the polytope. Press space to go to another random one in the same folder. This is useful for guessing games.
 
 \"Load Material\" is for loading .tres materials. These are only useful if you have the godot-4d module or otherwise have Godot 4D materials and meshes for whatever reason.
 
-v1.2.0"
+v1.3.0"
 autowrap_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/Vertical"]
@@ -339,12 +337,11 @@ text = "Load Model (.off, .tres)"
 [connection signal="value_changed" from="UI/Vertical/CameraFadeEnd/Slider" to="." method="_camera_fade_end_changed"]
 [connection signal="toggled" from="UI/Vertical/CameraFade/Button" to="." method="_depth_fade_toggled"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeDistance/Slider" to="." method="_camera_w_fade_distance_changed"]
-[connection signal="value_changed" from="UI/Vertical/CameraWFadeSlope/Slider" to="." method="_camera_w_fade_slope_changed"]
 [connection signal="value_changed" from="UI/Vertical/CameraWFadeDistanceFocus/Slider" to="." method="_camera_w_fade_distance_focus_changed"]
-[connection signal="value_changed" from="UI/Vertical/CameraWFadeSlopeFocus/Slider" to="." method="_camera_w_fade_slope_focus_changed"]
 [connection signal="value_changed" from="UI/Vertical/XYSpeed/Slider" to="." method="_xy_speed"]
 [connection signal="value_changed" from="UI/Vertical/ZWSpeed/Slider" to="." method="_zw_speed"]
 [connection signal="value_changed" from="UI/Vertical/YVSpeed/Slider" to="." method="_yv_speed"]
+[connection signal="value_changed" from="UI/Vertical/WSpeed/Slider" to="." method="w_speed"]
 [connection signal="pressed" from="UI/Vertical/Subdivide/Button" to="." method="_on_subdivide"]
 [connection signal="toggled" from="UI/Vertical/Axes/Button" to="." method="_on_axes_toggled"]
 [connection signal="pressed" from="UI/Vertical/VBoxContainer/RandomModel" to="." method="_on_random_model_loaded"]
