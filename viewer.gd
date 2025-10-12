@@ -80,37 +80,39 @@ func _process(delta):
 	
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
 	
-	if Input.is_action_pressed("ana"):
-		if visual.visible:
-			camera.position.w += wv_speed * delta
-		else:
-			visual_5D.v_pos -= wv_speed * delta
-	if Input.is_action_pressed("kata"):
-		if visual.visible:
-			camera.position.w -= wv_speed * delta
-		else:
-			visual_5D.v_pos += wv_speed * delta
 	if Input.is_action_just_pressed("reset view"):
 		reset_view(false)
 	
-	if visual_5D.visible:
-		var angular_speed := 1.0
-		if Input.is_action_pressed("xv"):
-			visual_5D.euler_5D.x += angular_speed * delta
-		if Input.is_action_pressed("vx"):
-			visual_5D.euler_5D.x -= angular_speed * delta
-		if Input.is_action_pressed("yv"):
-			visual_5D.euler_5D.y += angular_speed * delta
-		if Input.is_action_pressed("vy"):
-			visual_5D.euler_5D.y -= angular_speed * delta
-		if Input.is_action_pressed("zv"):
-			visual_5D.euler_5D.z += angular_speed * delta
-		if Input.is_action_pressed("vz"):
-			visual_5D.euler_5D.z -= angular_speed * delta
-		if Input.is_action_pressed("wv"):
-			visual_5D.euler_5D.w += angular_speed * delta
-		if Input.is_action_pressed("vw"):
-			visual_5D.euler_5D.w -= angular_speed * delta
+	if !ui.visible:
+		if Input.is_action_pressed("ana"):
+			if visual.visible:
+				camera.position.w += wv_speed * delta
+			else:
+				visual_5D.v_pos -= wv_speed * delta
+		if Input.is_action_pressed("kata"):
+			if visual.visible:
+				camera.position.w -= wv_speed * delta
+			else:
+				visual_5D.v_pos += wv_speed * delta
+		
+		if visual_5D.visible:
+			var angular_speed := 1.0
+			if Input.is_action_pressed("xv"):
+				visual_5D.euler_5D.x += angular_speed * delta
+			if Input.is_action_pressed("vx"):
+				visual_5D.euler_5D.x -= angular_speed * delta
+			if Input.is_action_pressed("yv"):
+				visual_5D.euler_5D.y += angular_speed * delta
+			if Input.is_action_pressed("vy"):
+				visual_5D.euler_5D.y -= angular_speed * delta
+			if Input.is_action_pressed("zv"):
+				visual_5D.euler_5D.z += angular_speed * delta
+			if Input.is_action_pressed("vz"):
+				visual_5D.euler_5D.z -= angular_speed * delta
+			if Input.is_action_pressed("wv"):
+				visual_5D.euler_5D.w += angular_speed * delta
+			if Input.is_action_pressed("vw"):
+				visual_5D.euler_5D.w -= angular_speed * delta
 	
 	if visual.visible:
 		if xy_speed != 0.0 or zw_speed != 0.0:
