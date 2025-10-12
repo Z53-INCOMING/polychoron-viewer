@@ -165,7 +165,7 @@ size_flags_horizontal = 2
 size_flags_vertical = 4
 max_value = 4.0
 step = 0.0625
-value = 3.0
+value = 1.0
 allow_greater = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistance"]
@@ -183,7 +183,7 @@ size_flags_horizontal = 2
 size_flags_vertical = 4
 max_value = 4.0
 step = 0.0625
-value = 1.0
+value = 0.25
 allow_greater = true
 
 [node name="Label" type="Label" parent="UI/Vertical/CameraWFadeDistanceFocus"]
