@@ -1,6 +1,7 @@
 extends Node4D
 
-var mouse_sensitivity := 0.004 * (2560.0 / float(ProjectSettings.get_setting("display/window/size/viewport_width")))
+var mouse_sensitivity := 0.0
+var mouse_sens_setting := 0.004
 
 @onready var orbit: Node4D = $Orbit
 @onready var camera = $Orbit/Camera
@@ -19,13 +20,9 @@ var zoom := 4.0
 var line_thickness := 8.0
 
 var camera_fade_start := -1.0
-var camera_fade_end := 0.0
+var camera_fade_end := 0.0625
 var camera_w_fade_distance := 1.0
 var camera_w_fade_distance_focus := 0.25
-
-var xy_angle := 0.0
-var zw_angle := 0.0
-var yv_angle := 0.0
 
 var xy_speed := 0.0
 var zw_speed := 0.0
@@ -51,9 +48,23 @@ func _ready():
 func reset_view(fully = true):
 	if camera.position.w == 0.0 or fully:
 		orbit.basis = Projection.IDENTITY
+		visual.basis = Projection.IDENTITY
+		visual_5D.basis = Projection.IDENTITY
+		visual_5D.euler_5D = Vector4.ZERO
 	camera.position.w = 0.0
 
 func _process(delta):
+	mouse_sensitivity = mouse_sens_setting * (2560.0 / float(DisplayServer.screen_get_size().x))
+	
+	if Input.is_action_just_pressed("fullscreen"):
+		if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			DisplayServer.window_set_size(Vector2i(640, 360))
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
 	if Input.is_action_just_pressed("reveal"):
 		filename_label.text = selected
 		revealed = 3.0
@@ -70,9 +81,15 @@ func _process(delta):
 	camera.w_fade_distance = lerpf(camera.w_fade_distance, camera_w_fade_distance_focus if Input.is_action_pressed("focus") else camera_w_fade_distance, 1.0 - pow(2.0, -delta / 0.1))
 	
 	if Input.is_action_pressed("ana"):
-		camera.position.w += wv_speed * delta
+		if visual.visible:
+			camera.position.w += wv_speed * delta
+		else:
+			visual_5D.v_pos -= wv_speed * delta
 	if Input.is_action_pressed("kata"):
-		camera.position.w -= wv_speed * delta
+		if visual.visible:
+			camera.position.w -= wv_speed * delta
+		else:
+			visual_5D.v_pos += wv_speed * delta
 	if Input.is_action_just_pressed("reset view"):
 		reset_view(false)
 	
@@ -95,19 +112,15 @@ func _process(delta):
 		if Input.is_action_pressed("vw"):
 			visual_5D.euler_5D.w -= angular_speed * delta
 	
-	xy_angle = wrapf(xy_angle + (xy_speed * delta), 0.0, TAU)
-	zw_angle = wrapf(zw_angle + (zw_speed * delta), 0.0, TAU)
-	yv_angle = wrapf(yv_angle + (yv_speed * delta), 0.0, TAU)
-	
 	if visual.visible:
 		if xy_speed != 0.0 or zw_speed != 0.0:
-			visual.global_basis *= Basis4D.from_xy(xy_angle)
-			visual.global_basis *= Basis4D.from_zw(zw_angle)
+			visual.global_basis *= Basis4D.from_xy(xy_speed * delta)
+			visual.global_basis *= Basis4D.from_zw(zw_speed * delta)
 	else:
 		if xy_speed != 0.0 or zw_speed != 0.0 or yv_speed != 0.0:
-			visual_5D.global_basis *= Basis4D.from_xy(xy_angle)
-			visual_5D.global_basis *= Basis4D.from_zw(zw_angle)
-			visual_5D.euler_5D.y = yv_angle
+			visual_5D.global_basis *= Basis4D.from_xy(xy_speed * delta)
+			visual_5D.global_basis *= Basis4D.from_zw(zw_speed * delta)
+			visual_5D.euler_5D.y += yv_speed * delta
 
 func _input(event):
 	if event is InputEventKey:
@@ -116,7 +129,8 @@ func _input(event):
 			if ui.visible:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 			else:
-				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+				if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN:
+					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
 	if !ui.visible:
 		if event is InputEventMouseButton:
@@ -364,6 +378,8 @@ func _on_material_file_selected(path):
 	else:
 		OS.alert("Godot resource was not of the type WireMaterial4D.", "Couldn't load material!")
 
-
 func w_speed(value):
 	wv_speed = value
+
+func _mouse_sens_setting(value):
+	mouse_sens_setting = value
