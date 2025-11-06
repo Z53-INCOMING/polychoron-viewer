@@ -14,6 +14,7 @@ var mouse_sens_setting := 0.004
 var revealed := 0.0
 var selected := ""
 var current_dir := ""
+var current_polytope_name := "polytope_export_no_name"
 
 var zoom := 4.0
 
@@ -46,12 +47,13 @@ func _ready():
 	randomize()
 
 func reset_view(fully = true):
-	if camera.position.w == 0.0 or fully:
+	if (camera.position.w == 0.0 and visual_5D.v_pos == 0.001) or fully:
 		orbit.basis = Projection.IDENTITY
 		visual.basis = Projection.IDENTITY
 		visual_5D.basis = Projection.IDENTITY
 		visual_5D.euler_5D = Vector4.ZERO
 	camera.position.w = 0.0
+	visual_5D.v_pos = 0.001
 
 func _process(delta):
 	mouse_sensitivity = mouse_sens_setting * (2560.0 / float(DisplayServer.screen_get_size().x))
@@ -64,6 +66,18 @@ func _process(delta):
 		else:
 			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	if Input.is_action_just_pressed("export"):
+		await RenderingServer.frame_post_draw
+		var screen_image := get_viewport().get_texture().get_image()
+		
+		var square_image := Image.create(1440, 1440, false, Image.FORMAT_RGBH)
+		
+		for x in 1440:
+			for y in 1440:
+				square_image.set_pixel(x, y, screen_image.get_pixel(x + 560, y).linear_to_srgb())
+		
+		square_image.save_png(OS.get_environment("USERPROFILE") + "\\Documents\\" + current_polytope_name + ".png")
 	
 	if Input.is_action_just_pressed("reveal"):
 		filename_label.text = selected
@@ -204,6 +218,10 @@ func _on_file_dialog_file_selected(path: String):
 	load_polytope(path)
 
 func load_polytope(path: String):
+	var name_start: int = max(path.rfind("/"), path.rfind("\\"))
+	var name_end: int = path.rfind(".")
+	current_polytope_name = path.substr(name_start, name_end - name_start)
+	
 	if path.ends_with("tres"):
 		var mesh = ResourceLoader.load(path)
 		
@@ -231,14 +249,24 @@ func load_polytope(path: String):
 		var dimensions := -1
 		for i in 6:
 			var line := file.get_line()
+			if line == "3OFF" or line == "OFF":
+				dimensions = 3
+				break
 			if line == "4OFF":
 				dimensions = 4
 				break
-			if line == "3OFF":
-				dimensions = 3
-				break
 			if line == "5OFF":
 				dimensions = 5
+				break
+			
+			if line == "2OFF":
+				dimensions = 2
+				break
+			if line == "1OFF":
+				dimensions = 1
+				break
+			if line == "0OFF":
+				dimensions = 0
 				break
 		
 		if dimensions < 5:
@@ -263,14 +291,12 @@ func load_polytope(path: String):
 		else:
 			if dimensions < 0:
 				OS.alert("Couldn't determine polytope's rank, or rank is invalid.", "Couldn't load polytope!")
-			elif dimensions < 3:
-				OS.alert("This program supports rank 3 polytopes minimum. You can replace the top of the file with 3OFF and then add 0 to the end of every vertex and then add one face for a sometimes quick fix.", "Couldn't load polytope!")
 			elif dimensions > 5:
 				OS.alert("Too many dimensions! This program supports rank 5 maximum.", "Couldn't load polytope!")
 			else:
 				OS.alert("I'm not sure what happened. The rank isn't -1 which means failed to determine, it isn't less than 0, it isn't less than 3, and it's not greater than 5, and yet it still failed because of a weird dimension count. The fuck did you do? Rank 4i?", "Couldn't load polytope!")
 	
-	reset_view()
+	reset_view(true)
 
 func _on_subdivide():
 	if visual.mesh and visual.visible:

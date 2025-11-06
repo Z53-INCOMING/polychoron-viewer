@@ -1,27 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://b5e205wj23gh7"]
+[gd_scene load_steps=5 format=3 uid="uid://b5e205wj23gh7"]
 
 [ext_resource type="Script" path="res://viewer.gd" id="1_ql75x"]
 [ext_resource type="ArrayWireMesh4D" uid="uid://bgf7l3ggm678q" path="res://escape_message.tres" id="2_wceh5"]
 [ext_resource type="PackedScene" uid="uid://bbyewgip236rr" path="res://mesh_instance_5d.tscn" id="3_ecl0n"]
 [ext_resource type="ArrayWireMesh4D" uid="uid://df30ctm2jhum" path="res://axes.tres" id="4_70cvx"]
 
-[sub_resource type="Environment" id="Environment_7e2ca"]
-background_mode = 3
-glow_enabled = true
-glow_levels/1 = 1.0
-glow_levels/2 = 0.86
-glow_levels/3 = 0.71
-glow_levels/4 = 0.57
-glow_levels/5 = 0.43
-glow_levels/6 = 0.29
-glow_levels/7 = 0.14
-glow_blend_mode = 0
-
 [node name="Viewer" type="Node4D"]
 script = ExtResource("1_ql75x")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_7e2ca")
 
 [node name="Orbit" type="Node4D" parent="."]
 
