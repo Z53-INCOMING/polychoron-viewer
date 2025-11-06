@@ -152,29 +152,29 @@ func _input(event):
 		if event is InputEventMouseButton:
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				if Input.is_key_pressed(KEY_SHIFT):
-					line_thickness *= 8.0 / 7.0
+					line_thickness *= 13.0 / 12.0
 				elif Input.is_key_pressed(KEY_CTRL):
-					camera.focal_length_4d *= 8.0 / 7.0
+					camera.focal_length_4d *= 13.0 / 12.0
 				else:
-					zoom *= 6.0 / 7.0
+					zoom *= 12.0 / 13.0
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				if Input.is_key_pressed(KEY_SHIFT):
-					line_thickness *= 7.0 / 8.0
+					line_thickness *= 12.0 / 13.0
 				elif Input.is_key_pressed(KEY_CTRL):
-					camera.focal_length_4d *= 7.0 / 8.0
+					camera.focal_length_4d *= 12.0 / 13.0
 				else:
-					zoom *= 7.0 / 6.0
+					zoom *= 13.0 / 12.0
 			visual.mesh.material.line_thickness = line_thickness
 			if visual_5D.mesh:
 				visual_5D.mesh.material.line_thickness = line_thickness
 		
 		if event is InputEventMouseMotion:
 			if Input.is_action_pressed("4d look"):
-				orbit.basis *= Basis4D.from_xw(event.relative.x * -mouse_sensitivity)
+				orbit.basis *= Basis4D.from_xw(event.relative.x * mouse_sensitivity)
 				orbit.basis *= Basis4D.from_wy(event.relative.y * mouse_sensitivity)
 			elif Input.is_action_pressed("roll look"):
 				orbit.basis *= Basis4D.from_xy(event.relative.x * mouse_sensitivity)
-				orbit.basis *= Basis4D.from_zw(event.relative.y * mouse_sensitivity)
+				orbit.basis *= Basis4D.from_zw(event.relative.y * -mouse_sensitivity)
 			else:
 				orbit.basis *= Basis4D.from_zx(event.relative.x * -mouse_sensitivity)
 				orbit.basis *= Basis4D.from_yz(event.relative.y * -mouse_sensitivity)
